@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FmNet - Estações de rádio em Belo Horizonte</title>
+    <!-- Folha de estilos principal, servida a partir de static/css/style.css -->
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+
+    <!-- Cabeçalho simples: o título grande e condensado já carrega a personalidade da página -->
+    <header class="masthead">
+        <h1>FmNet</h1>
+        <p class="subline">
+            <span class="count" th:text="${stations != null ? stations.size() : 0}"></span>
+            <span>estações de rádio ao vivo em Belo Horizonte</span>
+        </p>
+    </header>
+
+    <!-- Painel com a lista de estações -->
+    <div class="panel">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Estação</th>
+                <th>Tags</th>
+                <th>Votos</th>
+                <th>Cliques</th>
+                <th>Bitrate</th>
+                <th>Codec</th>
+                <th>Ouvir</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Estado vazio: exibido quando a API não retorna nenhuma estação -->
+            <tr th:if="${stations == null or stations.isEmpty()}">
+                <td colspan="8">
+                    <div class="empty-state">
+                        <strong>Nenhuma estação encontrada</strong>
+                        A busca não retornou resultados. Tente novamente em instantes.
+                    </div>
+                </td>
+            </tr>
+            <!-- Loop através das estações de rádio -->
+            <tr th:each="station, iterStat : ${stations}">
+                <td class="index" data-label="#" th:text="${iterStat.index + 1}"></td> <!-- Numeração -->
+
+                <td class="name" data-label="Estação">
+                    <div class="station">
+                        <!-- Favicon da estação, com fallback caso venha vazio ou quebrado -->
+                        <div class="favicon-frame">
+                            <img th:src="${station.favicon != null and !station.favicon.isEmpty()} ? ${station.favicon} : @{/imgs/aradio.webp}"
+                                 alt="Favicon" onerror="this.onerror=null;this.src='/imgs/aradio.webp';"/>
+                        </div>
+                        <div class="station-info">
+                            <!-- Nome da estação, linkando para a homepage -->
+                            <a class="station-name" th:href="${station.homepage}" th:text="${station.name}" target="_blank" rel="noopener noreferrer"></a>
+                            <!-- Link secundário para a URL de stream bruta -->
+                            <a class="stream-link" th:href="${station.url}" target="_blank" rel="noopener noreferrer">stream direto</a>
+                        </div>
+                    </div>
+                </td>
+
+                <!-- Tags: juntamos tudo em uma linha de texto; o CSS (text-overflow: ellipsis)
+                     é quem corta visualmente se ficar comprido, evitando lógica frágil de sublista aqui -->
+                <td class="tags-cell" data-label="Tags">
+                    <span class="tags-text" th:text="${#strings.arrayJoin(#strings.arraySplit(station.tags, ','), ', ')}"></span>
+                </td>
+
+                <td data-label="Votos"><span class="metric" th:text="${station.votes}"></span></td>
+                <td data-label="Cliques"><span class="metric-muted" th:text="${station.clickcount}"></span></td>
+                <td data-label="Bitrate"><span class="metric-muted" th:text="${station.bitrate} + ' kbps'"></span></td>
+                <td data-label="Codec"><span class="metric-muted" th:text="${station.codec}"></span></td>
+
+                <td class="player-cell" data-label="Ouvir">
+                    <!-- Player customizado: o botão redondo é controlado via JS lá embaixo.
+                         O <audio> real fica escondido (display:none no CSS) e é o que efetivamente toca o som. -->
+                    <div class="player">
+                        <button type="button" class="play-btn" th:attr="aria-label=${'Tocar ' + station.name}">
+                            <svg class="icon-play" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l10-5.5z"/></svg>
+                            <svg class="icon-pause" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg>
+                        </button>
+                        <!-- Controle de volume: só aparece de forma mais visível quando a estação está tocando (ver CSS) -->
+                        <input type="range" class="volume-slider" min="0" max="1" step="0.05" value="1"
+                               th:attr="aria-label=${'Volume de ' + station.name}"/>
+                        <audio preload="none">
+                            <source th:src="${station.url}">
+                        </audio>
+                    </div>
+                    <!-- Alternativa caso o JavaScript esteja desabilitado no navegador -->
+                    <noscript>
+                        <a class="no-js-fallback" th:href="${station.url}" target="_blank" rel="noopener noreferrer">ouvir stream</a>
+                    </noscript>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="note">Dados fornecidos pela Radio Browser API</footer>
+
+</div>
+
+<!-- Controla o botão de play customizado de cada estação, garantindo que só uma toque por vez -->
+<script>
+    (function () {
+        var players = document.querySelectorAll('.player');
+
+        players.forEach(function (player) {
+            var audio = player.querySelector('audio');
+            var button = player.querySelector('.play-btn');
+            var volumeSlider = player.querySelector('.volume-slider');
+
+            // Ajusta o volume do áudio conforme o slider é arrastado
+            volumeSlider.addEventListener('input', function () {
+                audio.volume = parseFloat(volumeSlider.value);
+            });
+
+            button.addEventListener('click', function () {
+                var wasPlaying = !audio.paused;
+
+                // Pausa qualquer outra estação que esteja tocando antes de iniciar esta
+                players.forEach(function (other) {
+                    var otherAudio = other.querySelector('audio');
+                    if (otherAudio !== audio && !otherAudio.paused) {
+                        otherAudio.pause();
+                    }
+                });
+
+                if (wasPlaying) {
+                    audio.pause();
+                } else {
+                    audio.play();
+                }
+            });
+
+            // Mantém o ícone do botão e o destaque da linha sincronizados com o estado real do áudio
+            audio.addEventListener('play', function () {
+                player.classList.add('is-playing');
+                player.closest('tr').classList.add('is-playing-row');
+            });
+            audio.addEventListener('pause', function () {
+                player.classList.remove('is-playing');
+                player.closest('tr').classList.remove('is-playing-row');
+            });
+            audio.addEventListener('ended', function () {
+                player.classList.remove('is-playing');
+                player.closest('tr').classList.remove('is-playing-row');
+            });
+        });
+    })();
+</script>
+</body>
+</html>

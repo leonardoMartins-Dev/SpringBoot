@@ -1,0 +1,381 @@
+/* Fontes: Big Shoulders Display (condensada, bold, com cara de letreiro/rádio antigo) para títulos,
+   e Inter para o corpo, por ser bem legível numa tabela densa de dados */
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Inter:wght@400;500;600&display=swap');
+
+/* Paleta: fundo claro e neutro, com dois acentos que carregam significado, não decoração:
+   vermelho = "no ar" / ação, verde = destaque de estado (tocando agora) */
+:root {
+    --bg: #ecece4;
+    --surface: #f7f6f1;
+    --ink: #17140f;
+    --muted: #6e675c;
+    --border: #dad4c8;
+    --accent-red: #e8432e;
+    --accent-green: #1f7a53;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 56px 28px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+/* Cabeçalho: o título condensado e bold é o único momento "ousado" da página;
+   tudo o resto ao redor fica discreto de propósito */
+header.masthead {
+    margin-bottom: 32px;
+}
+
+header.masthead h1 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800;
+    font-size: 4.2rem;
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+}
+
+header.masthead .subline {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+header.masthead .subline .count {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+/* Contêiner da lista de estações: bordas finas, sem sombra pesada nem cantos muito arredondados */
+.panel {
+    background: var(--surface);
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--border);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--border);
+    border-left: 3px solid transparent;
+}
+
+tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Linha da estação que está tocando no momento recebe destaque verde na lateral e leve tingimento */
+tbody tr.is-playing-row {
+    border-left-color: var(--accent-green);
+    background: rgba(31, 122, 83, 0.06);
+}
+
+td {
+    padding: 12px 14px;
+    vertical-align: middle;
+    font-size: 0.93rem;
+}
+
+/* Numeração do ranking: número simples, sem fonte monoespaçada nem decoração extra */
+td.index {
+    color: var(--muted);
+    font-size: 0.9rem;
+    width: 28px;
+}
+
+td.name {
+    max-width: 260px;
+}
+
+.station {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Favicon em quadrado arredondado (não círculo), preservando a logomarca original de cada estação
+   sem cortar as bordas — com fundo branco para logos com transparência */
+.favicon-frame {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favicon-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.station-info a.station-name {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    line-height: 1.2;
+}
+
+.station-info a.station-name:hover {
+    color: var(--accent-red);
+}
+
+.station-info a.stream-link {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+}
+
+.station-info a.stream-link:hover {
+    color: var(--ink);
+    text-decoration-color: var(--ink);
+}
+
+/* Tags mostradas como texto corrido e truncado, em vez de um badge para cada uma —
+   evita a tabela quebrando em várias linhas quando a estação tem muitas tags */
+.tags-cell {
+    max-width: 200px;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.tags-text {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tags-more {
+    color: var(--muted);
+    opacity: 0.7;
+}
+
+.metric {
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.metric-muted {
+    color: var(--muted);
+}
+
+/* Botão de play customizado, substituindo o widget feio padrão do navegador.
+   O elemento <audio> real fica escondido; este botão controla ele via JavaScript. */
+.player {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Slider de volume customizado, no lugar do que o widget nativo do navegador tinha embutido */
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 64px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 100px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* "Bolinha" arrastável do slider, em cada navegador (WebKit e Firefox têm pseudo-elementos diferentes) */
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: none;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+}
+
+/* Quando a estação está tocando, a bolinha do volume fica verde para reforçar o estado ativo */
+.player.is-playing .volume-slider::-webkit-slider-thumb {
+    background: var(--accent-green);
+}
+
+.player.is-playing .volume-slider::-moz-range-thumb {
+    background: var(--accent-green);
+}
+
+.play-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.play-btn:hover {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+/* Quando a estação está tocando, o botão fica preenchido em verde e mostra o ícone de pausa */
+.player.is-playing .play-btn {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: #fff;
+}
+
+.play-btn .icon-pause {
+    display: none;
+}
+
+.player.is-playing .play-btn .icon-play {
+    display: none;
+}
+
+.player.is-playing .play-btn .icon-pause {
+    display: block;
+}
+
+.play-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* O elemento de áudio nativo fica sempre oculto: quem controla é o botão customizado acima */
+.player audio {
+    display: none;
+}
+
+/* Caso o JavaScript esteja desabilitado, este link aparece como alternativa para ouvir o stream */
+.no-js-fallback {
+    font-size: 0.8rem;
+    color: var(--accent-red);
+    text-decoration: underline;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 64px 16px;
+    color: var(--muted);
+}
+
+.empty-state strong {
+    display: block;
+    color: var(--ink);
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+footer.note {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+/* Ajustes para telas menores: a tabela vira uma lista de cartões empilhados */
+@media (max-width: 860px) {
+    body {
+        padding: 32px 14px;
+    }
+
+    header.masthead h1 {
+        font-size: 3rem;
+    }
+
+    thead {
+        display: none;
+    }
+
+    .panel {
+        border: none;
+        background: transparent;
+    }
+
+    tbody tr {
+        display: block;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 3px solid transparent;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        padding: 12px;
+    }
+
+    tbody tr.is-playing-row {
+        border-left-color: var(--accent-green);
+    }
+
+    td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 0;
+        gap: 10px;
+    }
+
+    td.name {
+        max-width: none;
+    }
+
+    td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 0.72rem;
+        flex-shrink: 0;
+    }
+
+    td.index {
+        display: none;
+    }
+}
