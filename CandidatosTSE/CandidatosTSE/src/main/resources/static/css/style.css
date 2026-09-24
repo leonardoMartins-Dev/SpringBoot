@@ -1,0 +1,358 @@
+/* Visual inspirado na urna eletrônica: painel escuro, tela branca,
+   número em caixinhas e teclas CONFIRMA (verde) / CORRIGE (laranja). */
+:root {
+    --caixa: #E7E8E4;          /* fundo da página (plástico da urna) */
+    --painel: #1C1E22;         /* teclado escuro */
+    --painel-texto: #A3A8B0;
+    --tela: #FFFFFF;           /* cards (tela da urna) */
+    --tinta: #17191C;
+    --tinta-suave: #5B6068;
+    --linha: #D6D8D3;
+    --confirma: #1E9E50;
+    --confirma-sombra: #11632F;
+    --corrige: #EE7B1C;
+    --corrige-sombra: #A3520E;
+    --foco: #F2C230;
+
+    --fonte: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --fonte-mono: "Chivo Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: var(--caixa);
+    color: var(--tinta);
+    font-family: var(--fonte);
+    line-height: 1.4;
+}
+
+h1, h2, p, ul {
+    margin: 0;
+}
+
+ul {
+    padding: 0;
+    list-style: none;
+}
+
+:focus-visible {
+    outline: 3px solid var(--foco);
+    outline-offset: 2px;
+}
+
+/* ---------- Topo ---------- */
+
+#topo {
+    background-color: var(--painel);
+    color: #FFFFFF;
+    padding: 40px 16px 32px;
+}
+
+.topo-conteudo {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.eyebrow {
+    font-family: var(--fonte-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--painel-texto);
+}
+
+#title {
+    margin-top: 4px;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-weight: 800;
+    font-stretch: 125%;
+    line-height: 1;
+    letter-spacing: -0.01em;
+}
+
+.filtro {
+    margin-top: 28px;
+}
+
+.filtro-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--painel-texto);
+}
+
+.filtro-campos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filtro select {
+    min-width: 260px;
+    height: 44px;
+    padding: 0 40px 0 14px;
+    border: 0;
+    border-radius: 6px;
+    background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2317191C' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 14px center;
+    color: var(--tinta);
+    font: 600 0.95rem var(--fonte);
+    appearance: none;
+    cursor: pointer;
+}
+
+/* Teclas físicas da urna: afundam ao clicar */
+.tecla {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 6px;
+    color: var(--tinta);
+    font: 700 0.9rem var(--fonte);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 80ms ease, box-shadow 80ms ease;
+}
+
+.tecla:active {
+    transform: translateY(3px);
+}
+
+.tecla-confirma {
+    background-color: var(--confirma);
+    box-shadow: 0 4px 0 var(--confirma-sombra);
+}
+
+.tecla-confirma:active {
+    box-shadow: 0 1px 0 var(--confirma-sombra);
+}
+
+.tecla-corrige {
+    background-color: var(--corrige);
+    box-shadow: 0 4px 0 var(--corrige-sombra);
+}
+
+.tecla-corrige:active {
+    box-shadow: 0 1px 0 var(--corrige-sombra);
+}
+
+/* ---------- Resultados ---------- */
+
+.conteudo {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+    --foco: #1F5FD1;
+}
+
+.resultado-info {
+    margin-bottom: 20px;
+    color: var(--tinta-suave);
+}
+
+.resultado-info strong {
+    font-family: var(--fonte-mono);
+    color: var(--tinta);
+}
+
+.resultado-cargo {
+    font-weight: 600;
+    color: var(--tinta);
+}
+
+.sem-resultado {
+    padding: 48px 24px;
+    border: 2px dashed var(--linha);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.sem-resultado a {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--tinta);
+    font-weight: 700;
+}
+
+.grade-candidatos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 16px;
+}
+
+/* ---------- Card (tela da urna) ---------- */
+
+.card {
+    display: grid;
+    grid-template-columns: 1fr 96px;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+        "dados  foto"
+        "extras extras";
+    column-gap: 14px;
+    padding: 16px;
+    background-color: var(--tela);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+}
+
+.card-dados {
+    grid-area: dados;
+    min-width: 0;
+}
+
+.cargo {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+}
+
+.numero {
+    display: flex;
+    gap: 4px;
+    margin: 8px 0 10px;
+}
+
+.digito {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 38px;
+    border: 1.5px solid var(--tinta);
+    border-radius: 3px;
+    font-family: var(--fonte-mono);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.nome-urna {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-stretch: 85%;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.name {
+    margin-top: 2px;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--tinta-suave);
+}
+
+.partido {
+    margin-top: 10px;
+    font-size: 0.85rem;
+}
+
+.partido .rotulo {
+    color: var(--tinta-suave);
+}
+
+.situacao {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: var(--caixa);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.foto {
+    grid-area: foto;
+    position: relative;
+    align-self: start;
+    aspect-ratio: 161 / 225;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: var(--caixa);
+}
+
+/* aparece só quando a imagem não existe (o onerror remove o <img>) */
+.foto::before {
+    content: "Sem foto";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.7rem;
+    color: var(--tinta-suave);
+}
+
+.foto-candidato {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.extras {
+    grid-area: extras;
+    display: grid;
+    gap: 3px;
+    margin: 14px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--linha);
+    font-size: 0.8rem;
+}
+
+.extras div {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    column-gap: 8px;
+}
+
+.extras dt {
+    color: var(--tinta-suave);
+}
+
+.extras dd {
+    margin: 0;
+}
+
+/* O TSE manda tudo em maiúsculas: "SUPERIOR COMPLETO" -> "Superior completo" */
+.extra {
+    text-transform: lowercase;
+}
+
+.extra::first-letter {
+    text-transform: uppercase;
+}
+
+/* ---------- Telas pequenas ---------- */
+
+@media (max-width: 520px) {
+    #topo {
+        padding-top: 28px;
+    }
+
+    .filtro select {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .tecla {
+        flex: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tecla {
+        transition: none;
+    }
+}
