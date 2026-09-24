@@ -2,7 +2,7 @@
 
 Aplicação Spring Boot que lê o CSV oficial de candidatos do TSE (eleições gerais de 2026, Minas Gerais) e mostra as **1.832 candidaturas** em uma tela única, com foto, número, partido e filtro por cargo.
 
-<img src="CandidatosTSE/Captura%20de%20Tela%202026-09-24%20%C3%A0s%2019.25.06.png" alt="Tela da aplicação listando os candidatos de MG" width="1000"/>
+<img src="CandidatosTSE/CandidatosTSE/Captura de Tela 2026-09-24 às 19.25.06.png" alt="Tela da aplicação listando os candidatos de MG" width="1000"/>
 
 A tela tem um topo escuro com o filtro de cargo e os botões **Filtrar** (verde) e **Limpar** (laranja), a contagem de candidatos encontrados e a grade de cards. O visual imita a urna eletrônica: cada card mostra o número do candidato em caixinhas, como na tela de votação, e os botões seguem as cores das teclas CONFIRMA e CORRIGE.
 
